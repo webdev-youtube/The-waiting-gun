@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>THE WAITING GUN</title>
+    <meta name="description" content="A retro Gameboy-style tower defense. Accumulate bullets, fire in bursts, defend the wall.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  TITLE SCREEN                               -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="titleScreen">
+        <div id="titleContent">
+            <div id="titlePixelArt">
+                <!-- decorative pixel gun drawn in CSS -->
+            </div>
+            <h1 id="titleHeading">THE<br>WAITING<br>GUN</h1>
+            <p id="titleSub">A PIXEL TOWER DEFENSE</p>
+            <div id="titleBlink">PRESS START</div>
+            <div id="titleButtons">
+                <button id="playButton"     class="title-btn">▶ PLAY</button>
+                <button id="tutorialButton" class="title-btn title-btn-secondary">? HOW TO PLAY</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  TUTORIAL OVERLAY                           -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="tutorialScreen" style="display:none;">
+        <div id="tutorialBox">
+            <div id="tutorialSteps">
+
+                <!-- Step 1 -->
+                <div class="tut-step active" data-step="0">
+                    <div class="tut-icon">⏱</div>
+                    <h2>WAIT FOR AMMO</h2>
+                    <p>Bullets accumulate automatically over time. Watch the <span class="tut-hi">AMMO</span> counter in the top bar — it keeps rising.</p>
+                    <p class="tut-tip">TIP: Buy <span class="tut-hi">More Ammo Gain</span> upgrades to fill it faster.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="tut-step" data-step="1">
+                    <div class="tut-icon">🎚</div>
+                    <h2>SET YOUR BURST</h2>
+                    <p>Use the <span class="tut-hi">[ - ]</span> and <span class="tut-hi">[ + ]</span> buttons to set how many bullets fire per shot.</p>
+                    <p>More bullets = more spread and more damage, but costs more ammo.</p>
+                    <p class="tut-tip">TIP: Higher X turns a single click into a shotgun blast!</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="tut-step" data-step="2">
+                    <div class="tut-icon">🔫</div>
+                    <h2>FIRE!</h2>
+                    <p>When the <span class="tut-hi">FIRE</span> button turns bright — you have enough ammo. Tap it to shoot!</p>
+                    <p>All active units fire simultaneously toward the enemies.</p>
+                    <p class="tut-tip">TIP: Unlock <span class="tut-hi">Autofire</span> to shoot automatically.</p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="tut-step" data-step="3">
+                    <div class="tut-icon">💰</div>
+                    <h2>EARN MONEY</h2>
+                    <p>Every enemy you kill drops <span class="tut-hi">$money</span>. Tougher enemies and longer games mean bigger rewards.</p>
+                    <p>Spend money in the upgrade tabs at the bottom.</p>
+                    <p class="tut-tip">TIP: Bosses are worth 10× normal enemy money!</p>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="tut-step" data-step="4">
+                    <div class="tut-icon">⬆</div>
+                    <h2>BUY UPGRADES</h2>
+                    <p>Three upgrade tabs: <span class="tut-hi">[+] GENERAL</span> for bullets &amp; damage, <span class="tut-hi">[*] UNITS</span> to unlock more soldiers, <span class="tut-hi">[#] WALL</span> for defense.</p>
+                    <p class="tut-tip">TIP: Unlock new units early — each one fires on every shot!</p>
+                </div>
+
+                <!-- Step 6 -->
+                <div class="tut-step" data-step="5">
+                    <div class="tut-icon">🏰</div>
+                    <h2>DEFEND THE WALL</h2>
+                    <p>Enemies march from the <span class="tut-hi">right</span> toward your wall on the <span class="tut-hi">left</span>. If the wall hits 0 HP — game over.</p>
+                    <p>Difficulty ramps up over time. Bosses spawn randomly. Good luck!</p>
+                    <p class="tut-tip">TIP: Watch the wall's color — it turns red when critical!</p>
+                </div>
+
+            </div>
+
+            <!-- Nav -->
+            <div id="tutorialNav">
+                <button id="tutPrev" class="tut-nav-btn" disabled>◀ BACK</button>
+                <div id="tutDots"></div>
+                <button id="tutNext" class="tut-nav-btn">NEXT ▶</button>
+            </div>
+            <button id="tutPlay"  class="title-btn" style="display:none;">▶ PLAY NOW</button>
+            <button id="tutClose" class="title-btn title-btn-secondary" style="margin-top:8px;">✕ CLOSE</button>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  GAME                                       -->
+    <!-- ═══════════════════════════════════════════ -->
+    <div id="gameContainer" style="display:none;">
+        <!-- Top Stats Bar -->
+        <div id="statsBar">
+            <div class="stat"><span class="stat-label">$:</span><span id="moneyDisplay">$0</span></div>
+            <div class="stat"><span class="stat-label">AMMO:</span><span id="bulletsDisplay">0.0</span></div>
+            <div class="stat"><span class="stat-label">WALL:</span><span id="wallHPDisplay">100/100</span></div>
+            <div class="stat"><span class="stat-label">HI:</span><span id="highScoreDisplay">0</span></div>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="controlPanel">
+            <div id="fireControls">
+                <div id="bulletSelector">
+                    <button id="decreaseX" class="x-button">-</button>
+                    <div id="xDisplay">
+                        <span class="x-label">Bullets per Shot:</span>
+                        <span id="xValue">3</span>
+                    </div>
+                    <button id="increaseX" class="x-button">+</button>
+                </div>
+                <button id="fireButton" class="main-button">FIRE</button>
+                <div id="autofireToggle" style="display: none;">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="autofireCheckbox">
+                        <span>Autofire</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div id="upgradeSection">
+            <div id="tabButtons">
+                <button class="tab-button active" data-tab="general">[+] GENERAL</button>
+                <button class="tab-button" data-tab="units">[*] UNITS</button>
+                <button class="tab-button" data-tab="wall">[#] WALL</button>
+            </div>
+            <div id="upgradeContainer">
+                <div id="generalTab" class="upgrade-tab active">
+                    <div class="upgrade-item" data-upgrade="damageMultiplier">
+                        <div class="upgrade-info"><h3>Overall Damage</h3><p>Level: <span class="level">0</span> | Cost: $<span class="cost">10</span></p><p class="desc">+1% damage per level</p></div>
+                        <button class="buy-button">BUY</button>
+                    </div>
+                    <div class="upgrade-item" data-upgrade="fireLimitBreak">
+                        <div class="upgrade-info"><h3>Fire Limit Break</h3><p>Level: <span class="level">0</span> | Cost: $<span class="cost">50</span></p><p class="desc">Increase max bullets per shot</p></div>
+                        <button class="buy-button">BUY</button>
+                    </div>
+                    <div class="upgrade-item" data-upgrade="moreAmmo">
+                        <div class="upgrade-info"><h3>More Ammo Gain</h3><p>Level: <span class="level">0</span> | Cost: $<span class="cost">20</span></p><p class="desc">BPS gain scales exponentially per level</p></div>
+                        <button class="buy-button">BUY</button>
+                    </div>
+                    <div class="upgrade-item" data-upgrade="captainAutofire">
+                        <div class="upgrade-info"><h3>Captain Autofire</h3><p>Level: <span class="level">0</span>/1 | Cost: $<span class="cost">500</span></p><p class="desc">Enables automatic firing</p></div>
+                        <button class="buy-button">BUY</button>
+                    </div>
+                    <div class="upgrade-item" data-upgrade="explosiveRounds">
+                        <div class="upgrade-info"><h3>Explosive Rounds</h3><p>Level: <span class="level">0</span>/10 | Cost: $<span class="cost">200</span></p><p class="desc">+5% explosion chance per level (max 50%)</p></div>
+                        <button class="buy-button">BUY</button>
+                    </div>
+                    <div class="upgrade-item" data-upgrade="critRate">
+                        <div class="upgrade-info"><h3>Critical Rate</h3><p>Level: <span class="level">0</span>/10 | Cost: $<span class="cost">300</span></p><p class="desc">+1% crit chance per level</p></div>
+                        <button class="buy-button">BUY</button>
+                    </div>
+                    <div class="upgrade-item" data-upgrade="critDamage">
+                        <div class="upgrade-info"><h3>Critical Damage</h3><p>Level: <span class="level">0</span> | Cost: $<span class="cost">100</span></p><p class="desc">+0.1x crit multiplier per level</p></div>
+                        <button class="buy-button">BUY</button>
+                    </div>
+                    <div class="upgrade-item" data-upgrade="bulletFusion">
+                        <div class="upgrade-info"><h3>Bullet Fusion</h3><p>Level: <span class="level">0</span>/1 | Cost: $<span class="cost">1000</span></p><p class="desc">Every 10 bullets = 1 Fusion Round (3x dmg)</p></div>
+                        <button class="buy-button">BUY</button>
+                    </div>
+                    <div class="upgrade-item" data-upgrade="warChest">
+                        <div class="upgrade-info"><h3>War Chest</h3><p>Level: <span class="level">0</span> | Cost: $<span class="cost">80</span></p><p class="desc">+12% enemy money drop per level (compounding)</p></div>
+                        <button class="buy-button">BUY</button>
+                    </div>
+                    <div class="upgrade-item" data-upgrade="fieldRations">
+                        <div class="upgrade-info"><h3>Field Rations</h3><p>Level: <span class="level">0</span> | Cost: $<span class="cost">100</span></p><p class="desc">-3% cost on all upgrades per level</p></div>
+                        <button class="buy-button">BUY</button>
+                    </div>
+                </div>
+
+                <div id="unitsTab" class="upgrade-tab">
+                    <div id="unitsList">
+                        <div class="unit-upgrade" data-unit="0">
+                            <div class="upgrade-info"><h3>Captain (Unit 1)</h3><p>Level: <span class="level">1</span> | Cost: $<span class="cost">20</span></p><p class="desc">Auto-aim enabled.</p></div>
+                            <button class="buy-button">UPGRADE</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="wallTab" class="upgrade-tab">
+                    <div class="upgrade-item" data-upgrade="wallThickening">
+                        <div class="upgrade-info"><h3>Wall Thickening</h3><p>Level: <span class="level">0</span> | Cost: $<span class="cost">30</span></p><p class="desc">+10 Max HP per level</p></div>
+                        <button class="buy-button">BUY</button>
+                    </div>
+                    <div class="upgrade-item" data-upgrade="kineticRepulsion">
+                        <div class="upgrade-info"><h3>Kinetic Repulsion</h3><p>Level: <span class="level">0</span>/10 | Cost: $<span class="cost">150</span></p><p class="desc">+5% knockback chance per level</p></div>
+                        <button class="buy-button">BUY</button>
+                    </div>
+                    <div class="upgrade-item" data-upgrade="improvedMaterial">
+                        <div class="upgrade-info"><h3>Improved Material</h3><p>Level: <span class="level">0</span> | Cost: $<span class="cost">500</span></p><p class="desc">×1.5 total wall HP</p></div>
+                        <button class="buy-button">BUY</button>
+                    </div>
+                    <div class="upgrade-item" data-upgrade="armorPlating">
+                        <div class="upgrade-info"><h3>Armor Plating</h3><p>Level: <span class="level">0</span>/25 | Cost: $<span class="cost">200</span></p><p class="desc">-1% damage taken per level</p></div>
+                        <button class="buy-button">BUY</button>
+                    </div>
+                    <div class="upgrade-item" data-upgrade="barbedWires">
+                        <div class="upgrade-info"><h3>Barbed Wires</h3><p>Level: <span class="level">0</span>/1 | Cost: $<span class="cost">750</span></p><p class="desc">Enemies lose 5% HP on wall touch</p></div>
+                        <button class="buy-button">BUY</button>
+                    </div>
+                    <div class="upgrade-item" data-upgrade="fieldPatch">
+                        <div class="upgrade-info"><h3>Field Patch</h3><p>Used: <span class="level">0</span>x | Cost: $<span class="cost">90</span></p><p class="desc">Instantly repair 20 wall HP</p></div>
+                        <button class="buy-button">USE</button>
+                    </div>
+                    <div class="upgrade-item" data-upgrade="emergencyRepairs">
+                        <div class="upgrade-info"><h3>Emergency Repairs</h3><p>Used: <span class="level">0</span>x | Cost: $<span class="cost">120</span></p><p class="desc">Restore 10% of max wall HP</p></div>
+                        <button class="buy-button">USE</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="gameOverScreen" style="display: none;">
+            <div id="gameOverContent">
+                <h1>WALL DESTROYED</h1>
+                <p>Final Score: <span id="finalScore">0</span></p>
+                <p>Kills: <span id="finalKills">0</span></p>
+                <p>Money Earned: $<span id="finalMoney">0</span></p>
+                <button id="restartButton" class="restart-button">RESTART</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
